@@ -1,0 +1,52 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+import plotnine as gg
+
+# Read the data from the URL
+data = pd.read_csv("https://raw.githubusercontent.com/amankharwal/Website-data/master/unemployment.csv")
+
+# Rename columns
+data.columns = ["States", "Date", "Frequency", "Estimated Unemployment Rate", "Estimated Employed", "Estimated Labour Participation Rate", "Region", "Longitude", "Latitude"]
+
+# Heatmap
+plt.figure(figsize=(12, 10))
+sns.heatmap(data.corr(), annot=True, cmap='coolwarm')
+plt.title("Correlation Heatmap")
+plt.show()
+
+# Histogram for Estimated Employed
+plt.figure(figsize=(12, 10))
+plt.title("Estimated Employed Distribution")
+sns.histplot(data=data, x="Estimated Employed", hue="Region")
+plt.show()
+
+# Histogram for Estimated Unemployment Rate
+plt.figure(figsize=(12, 10))
+plt.title("Estimated Unemployment Rate Distribution")
+sns.histplot(data=data, x="Estimated Unemployment Rate", hue="Region")
+plt.show()
+
+# Pie Chart for Region Distribution
+region_counts = data['Region'].value_counts()
+plt.figure(figsize=(8, 6))
+plt.title("Region Distribution")
+plt.pie(region_counts, labels=region_counts.index, autopct='%1.1f%%', startangle=90)
+plt.axis('equal')
+plt.show()
+
+# Scatter Plot for Estimated Employed vs. Estimated Unemployment Rate
+plt.figure(figsize=(12, 10))
+plt.title("Estimated Employed vs. Estimated Unemployment Rate")
+sns.scatterplot(data=data, x="Estimated Employed", y="Estimated Unemployment Rate", hue="Region")
+plt.show()
+
+# ggplot for Estimated Employed vs. Estimated Unemployment Rate
+ggplot_data = data[["Estimated Employed", "Estimated Unemployment Rate", "Region"]]
+(gg.ggplot(ggplot_data, gg.aes(x="Estimated Employed", y="Estimated Unemployment Rate", color="Region")) +
+ gg.geom_point() +
+ gg.labs(title="Estimated Employed vs. Estimated Unemployment Rate") +
+ gg.theme_minimal() +
+ gg.theme(axis_text_x=gg.element_text(angle=45))
+).draw()
